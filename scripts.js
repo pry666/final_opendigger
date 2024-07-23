@@ -119,11 +119,11 @@ fetch('/data/log_all.csv')
                 type: 'shadow'
             }
         },
-        legend: {
+        /*legend: {
             orient: 'vertical',
             left: 'left',
             data: communities
-        },
+        },*/
         xAxis: {
             type: 'category',
             data: years,
@@ -137,9 +137,422 @@ fetch('/data/log_all.csv')
         series: seriesData
     };
 
-    for (let i = 2; i <= 7; i++) {
-        let chart = echarts.init(document.getElementById(`chart${i}`));
+    let chart = echarts.init(document.getElementById(`chart2`));
+    chart.setOption(option);
+})
+.catch(error => console.error('Error reading CSV file:', error));
+
+// scripts.js
+
+// 读取 CSV 文件
+fetch('/data/merge_all.csv')
+    .then(response => response.text())
+    .then(csvText => {
+        var data = Papa.parse(csvText, { header: true }).data;
+
+        // 过滤掉空行
+        data = data.filter(row => row['year_month'] && row['record_num'] && row['community']);
+
+
+        // 按社区分组数据
+        var communityGroups = {};
+        data.forEach(row => {
+            let community = row['community'];
+            let yearMonth = row['year_month'];
+            let recordNum = parseInt(row['record_num']);
+
+            if (!communityGroups[community]) {
+                communityGroups[community] = [];
+            }
+            communityGroups[community].push([yearMonth, recordNum]);
+        });
+
+
+
+        // 自定义颜色列表（根据需要调整）
+        var colors = [
+            '#FF6347', '#4682B4', '#32CD32', '#FFD700', '#6A5ACD',
+            '#FF4500', '#8A2BE2', '#00FA9A', '#FF1493', '#1E90FF',
+            '#DA70D6', '#87CEEB', '#3CB371', '#B8860B', '#8B4513'
+        ];
+
+        // 准备系列数据
+        var seriesData = Object.keys(communityGroups).map((community, index) => ({
+            name: community,
+            type: 'scatter',
+            data: communityGroups[community],
+            symbolSize: function (data) {
+                return Math.sqrt(data[1]); // 根据 record_num 动态调整大小
+            },
+            itemStyle: {
+                color: colors[index % colors.length]
+            }
+        }));
+
+
+        // 配置 ECharts 散点图选项
+        var option = {
+            title: {
+                text: 'Record Numbers by Community and Year-Month',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: function (params) {
+                    return params.seriesName + '<br/>' + 
+                           'Year-Month: ' + params.data[0] + '<br/>' + 
+                           'Records: ' + params.data[1];
+                }
+            },
+            /*legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: Object.keys(communityGroups)
+            },*/
+            xAxis: {
+                type: 'category',
+                name: 'Year-Month',
+                data: [...new Set(data.map(row => row['year_month']))]
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Record Numbers'
+            },
+            series: seriesData
+        };
+
+        // 使用配置项和数据显示图表
+        let chart = echarts.init(document.getElementById(`chart3`));
         chart.setOption(option);
-    }
+    })
+    .catch(error => console.error('Error reading CSV file:', error));
+
+
+// 读取 CSV 文件
+fetch('/data/star_all.csv')
+.then(response => response.text())
+.then(csvText => {
+    var data = Papa.parse(csvText, { header: true }).data;
+
+    // 过滤掉空行
+    data = data.filter(row => row['year_month'] && row['stars'] && row['community']);
+
+
+    // 按社区分组数据
+    var communityGroups = {};
+    data.forEach(row => {
+        let community = row['community'];
+        let yearMonth = row['year_month'];
+        let stars = parseInt(row['stars']);
+
+        if (!communityGroups[community]) {
+            communityGroups[community] = [];
+        }
+        communityGroups[community].push([yearMonth, stars]);
+    });
+
+
+
+    // 自定义颜色列表（根据需要调整）
+    var colors = [
+        '#FF6347', '#4682B4', '#32CD32', '#FFD700', '#6A5ACD',
+        '#FF4500', '#8A2BE2', '#00FA9A', '#FF1493', '#1E90FF',
+        '#DA70D6', '#87CEEB', '#3CB371', '#B8860B', '#8B4513'
+    ];
+
+    // 准备系列数据
+    var seriesData = Object.keys(communityGroups).map((community, index) => ({
+        name: community,
+        type: 'line',
+        data: communityGroups[community],
+        itemStyle: {
+            color: colors[index % colors.length]
+        }
+    }));
+
+
+    // 配置 ECharts 散点图选项
+    var option = {
+        title: {
+            text: 'Star by Community and Year-Month',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: function (params) {
+                return params.seriesName + '<br/>' + 
+                       'Year-Month: ' + params.data[0] + '<br/>' + 
+                       'Stars: ' + params.data[1];
+            }
+        },
+        /*legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: Object.keys(communityGroups)
+        },*/
+        xAxis: {
+            type: 'category',
+            name: 'Year-Month',
+            data: [...new Set(data.map(row => row['year_month']))]
+        },
+        yAxis: {
+            type: 'value',
+            name: 'Record Numbers'
+        },
+        series: seriesData
+    };
+
+    // 使用配置项和数据显示图表
+    let chart = echarts.init(document.getElementById(`chart4`));
+    chart.setOption(option);
+})
+.catch(error => console.error('Error reading CSV file:', error));
+
+// 读取 CSV 文件
+fetch('/data/fork_all.csv')
+.then(response => response.text())
+.then(csvText => {
+    var data = Papa.parse(csvText, { header: true }).data;
+
+    // 过滤掉空行
+    data = data.filter(row => row['year_month'] && row['forks'] && row['community']);
+
+
+    // 按社区分组数据
+    var communityGroups = {};
+    data.forEach(row => {
+        let community = row['community'];
+        let yearMonth = row['year_month'];
+        let forks = parseInt(row['forks']);
+
+        if (!communityGroups[community]) {
+            communityGroups[community] = [];
+        }
+        communityGroups[community].push([yearMonth, forks]);
+    });
+
+
+
+    // 自定义颜色列表（根据需要调整）
+    var colors = [
+        '#FF6347', '#4682B4', '#32CD32', '#FFD700', '#6A5ACD',
+        '#FF4500', '#8A2BE2', '#00FA9A', '#FF1493', '#1E90FF',
+        '#DA70D6', '#87CEEB', '#3CB371', '#B8860B', '#8B4513'
+    ];
+
+    // 准备系列数据
+    var seriesData = Object.keys(communityGroups).map((community, index) => ({
+        name: community,
+        type: 'line',
+        data: communityGroups[community],
+        itemStyle: {
+            color: colors[index % colors.length]
+        }
+    }));
+
+
+    // 配置 ECharts 散点图选项
+    var option = {
+        title: {
+            text: 'Forks by Community and Year-Month',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: function (params) {
+                return params.seriesName + '<br/>' + 
+                       'Year-Month: ' + params.data[0] + '<br/>' + 
+                       'Forks: ' + params.data[1];
+            }
+        },
+        /*legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: Object.keys(communityGroups)
+        },*/
+        xAxis: {
+            type: 'category',
+            name: 'Year-Month',
+            data: [...new Set(data.map(row => row['year_month']))]
+        },
+        yAxis: {
+            type: 'value',
+            name: 'Record Numbers'
+        },
+        series: seriesData
+    };
+
+    // 使用配置项和数据显示图表
+    let chart = echarts.init(document.getElementById(`chart5`));
+    chart.setOption(option);
+})
+.catch(error => console.error('Error reading CSV file:', error));
+
+fetch('/data/activity_all.csv')
+    .then(response => response.text())
+    .then(csvText => {
+        var data = Papa.parse(csvText, { header: true }).data;
+
+        // 过滤掉空行
+        data = data.filter(row => row['year_month'] && row['actor_count'] && row['community']);
+
+
+        // 按社区分组数据
+        var communityGroups = {};
+        data.forEach(row => {
+            let community = row['community'];
+            let yearMonth = row['year_month'];
+            let actorNum = parseInt(row['actor_count']);
+
+            if (!communityGroups[community]) {
+                communityGroups[community] = [];
+            }
+            communityGroups[community].push([yearMonth, actorNum]);
+        });
+
+
+
+        // 自定义颜色列表（根据需要调整）
+        var colors = [
+            '#FF6347', '#4682B4', '#32CD32', '#FFD700', '#6A5ACD',
+            '#FF4500', '#8A2BE2', '#00FA9A', '#FF1493', '#1E90FF',
+            '#DA70D6', '#87CEEB', '#3CB371', '#B8860B', '#8B4513'
+        ];
+
+        // 准备系列数据
+        var seriesData = Object.keys(communityGroups).map((community, index) => ({
+            name: community,
+            type: 'scatter',
+            data: communityGroups[community],
+            symbolSize: function (data) {
+                return Math.sqrt(data[1]); // 根据 record_num 动态调整大小
+            },
+            itemStyle: {
+                color: colors[index % colors.length]
+            }
+        }));
+
+
+        // 配置 ECharts 散点图选项
+        var option = {
+            title: {
+                text: 'Actor Numbers by Community and Year-Month',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: function (params) {
+                    return params.seriesName + '<br/>' + 
+                           'Year-Month: ' + params.data[0] + '<br/>' + 
+                           'Actors: ' + params.data[1];
+                }
+            },
+            /*legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: Object.keys(communityGroups)
+            },*/
+            xAxis: {
+                type: 'category',
+                name: 'Year-Month',
+                data: [...new Set(data.map(row => row['year_month']))]
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Actor Numbers'
+            },
+            series: seriesData
+        };
+
+        // 使用配置项和数据显示图表
+        let chart = echarts.init(document.getElementById(`chart6`));
+        chart.setOption(option);
+    })
+    .catch(error => console.error('Error reading CSV file:', error));
+
+
+    // scripts.js
+
+// 读取 CSV 文件
+fetch('/data/star_and_fork.csv')
+.then(response => response.text())
+.then(csvText => {
+    var data = Papa.parse(csvText, { header: true }).data;
+
+    // 过滤掉空行
+    data = data.filter(row => row['year'] && row['stars'] && row['forks'] && row['community']);
+
+
+    // 按社区和年份分组数据
+    var communityYearGroups = {};
+    data.forEach(row => {
+        let community = row['community'];
+        let year = row['year'];
+        let stars = parseInt(row['stars']);
+        let forks = parseInt(row['forks']);
+        let total = stars + forks;
+
+        if (!communityYearGroups[community]) {
+            communityYearGroups[community] = {};
+        }
+        if (!communityYearGroups[community][year]) {
+            communityYearGroups[community][year] = 0;
+        }
+        communityYearGroups[community][year] += total;
+    });
+
+
+    // 获取所有社区和年份
+    var communities = Object.keys(communityYearGroups);
+    var years = [...new Set(data.map(row => row['year']))];
+
+    // 准备系列数据
+    var seriesData = years.map(year => ({
+        name: year.toString(),
+        type: 'bar',
+        data: communities.map(community => communityYearGroups[community][year] || 0)
+    }));
+
+
+
+    // 配置 ECharts 柱状图选项
+    var option = {
+        title: {
+            text: 'Stars and Forks by Community and Year',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            },
+            formatter: function (params) {
+                let tooltipText = params[0].axisValue + '<br/>';
+                params.forEach(param => {
+                    tooltipText += param.seriesName + ': ' + param.data + '<br/>';
+                });
+                return tooltipText;
+            }
+        },
+        legend: {
+            data: years.map(year => year.toString()),
+            top: 'bottom'
+        },
+        xAxis: {
+            type: 'category',
+            name: 'Community',
+            data: communities
+        },
+        yAxis: {
+            type: 'value',
+            name: 'Stars + Forks'
+        },
+        series: seriesData
+    };
+
+        // 初始化 ECharts 实例
+    var chart = echarts.init(document.getElementById('chart7'));
+    // 使用配置项和数据显示图表
+    chart.setOption(option);
 })
 .catch(error => console.error('Error reading CSV file:', error));
