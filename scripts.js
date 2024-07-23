@@ -11,7 +11,7 @@ fetch('data.csv')
         var values = data.map(row => parseFloat(row['value']));
 
         // 初始化 ECharts 实例
-        var chart = echarts.init(document.getElementById('chart'));
+        //var chart = echarts.init(document.getElementById('chart'));
 
         // 配置 ECharts 图表选项
         var option = {
@@ -33,6 +33,9 @@ fetch('data.csv')
         };
 
         // 使用配置项和数据显示图表
-        chart.setOption(option);
+        for (let i = 1; i <= 7; i++) {
+            let chart = echarts.init(document.getElementById(`chart${i}`));
+            chart.setOption(option);
+        }
     })
     .catch(error => console.error('Error reading CSV file:', error));
