@@ -23,7 +23,6 @@ function addClickEvent(smallChart, bigChart, bigChartContainer, smallChartContai
     };
 }
 
-// 读取 CSV 文件
 fetch('/data/contributor_all.csv')
     .then(response => response.text())
     .then(csvText => {
@@ -47,7 +46,6 @@ fetch('/data/contributor_all.csv')
             '#1E90FF'  // DodgerBlue
         ];
 
-        // 配置 ECharts 饼图选项
         var option1 = {
             title: {
                 text: 'Contributors by Community',
@@ -86,22 +84,21 @@ fetch('/data/contributor_all.csv')
                 }
             }]
         };
-        // 使用配置项和数据显示图表
+
         let bigChartContainer = document.getElementById('chart1');
         let bigChart = initChart(bigChartContainer.id, option1);
         //let chart = echarts.init(document.getElementById(`chart1`));
 
 
 
-    // scripts.js
 
-// 读取 CSV 文件
 fetch('/data/log_all.csv')
 .then(response => response.text())
 .then(csvText => {
     var data = Papa.parse(csvText, { header: true }).data;
     data = data.filter(row => row['year'] && row['community'] && row['count']);
-    // 汇总每个社区每年的贡献量
+
+
     var yearCommunityTotals = data.reduce((acc, row) => {
         let year = row['year'];
         let community = row['community'];
@@ -119,7 +116,7 @@ fetch('/data/log_all.csv')
         return acc;
     }, {});
 
-    // 将数据转换为 ECharts 需要的格式
+
     var years = Object.keys(yearCommunityTotals);
     var communities = Array.from(new Set(data.map(row => row['community'])));
     var seriesData = communities.map(community => ({
@@ -129,14 +126,13 @@ fetch('/data/log_all.csv')
         data: years.map(year => yearCommunityTotals[year][community] || 0)
     }));
 
-    // 自定义颜色列表（根据需要调整）
+
     var colors = [
         '#FF6347', '#4682B4', '#32CD32', '#FFD700', '#6A5ACD',
         '#FF4500', '#8A2BE2', '#00FA9A', '#FF1493', '#1E90FF'
     ];
 
 
-    // 配置 ECharts 堆叠柱状图选项
     var option2 = {
         title: {
             text: 'Contributors by Community and Year',
@@ -169,7 +165,7 @@ fetch('/data/log_all.csv')
             type: 'value',
             name: 'Contributors'
         },
-        color: colors, // 使用自定义颜色列表
+        color: colors, 
         series: seriesData
     };
 
@@ -179,19 +175,15 @@ fetch('/data/log_all.csv')
 })
 .catch(error => console.error('Error reading CSV file:', error));
 
-// scripts.js
 
-// 读取 CSV 文件
 fetch('/data/merge_all.csv')
     .then(response => response.text())
     .then(csvText => {
         var data = Papa.parse(csvText, { header: true }).data;
 
-        // 过滤掉空行
+
         data = data.filter(row => row['year_month'] && row['record_num'] && row['community']);
 
-
-        // 按社区分组数据
         var communityGroups = {};
         data.forEach(row => {
             let community = row['community'];
@@ -205,21 +197,19 @@ fetch('/data/merge_all.csv')
         });
 
 
-
-        // 自定义颜色列表（根据需要调整）
         var colors = [
             '#FF6347', '#4682B4', '#32CD32', '#FFD700', '#6A5ACD',
             '#FF4500', '#8A2BE2', '#00FA9A', '#FF1493', '#1E90FF',
             '#DA70D6', '#87CEEB', '#3CB371', '#B8860B', '#8B4513'
         ];
 
-        // 准备系列数据
+
         var seriesData = Object.keys(communityGroups).map((community, index) => ({
             name: community,
             type: 'scatter',
             data: communityGroups[community],
             symbolSize: function (data) {
-                return Math.sqrt(data[1]); // 根据 record_num 动态调整大小
+                return Math.sqrt(data[1]); 
             },
             itemStyle: {
                 color: colors[index % colors.length]
@@ -227,7 +217,6 @@ fetch('/data/merge_all.csv')
         }));
 
 
-        // 配置 ECharts 散点图选项
         var option3 = {
             title: {
                 text: 'Record Numbers by Community and Year-Month',
@@ -265,7 +254,6 @@ fetch('/data/merge_all.csv')
             series: seriesData
         };
 
-        // 使用配置项和数据显示图表
         let smallChartContainer = document.getElementById('chart3');
         let smallChart = initChart(smallChartContainer.id, option3);
         addClickEvent(smallChart, bigChart, bigChartContainer, smallChartContainer);
@@ -273,17 +261,16 @@ fetch('/data/merge_all.csv')
     .catch(error => console.error('Error reading CSV file:', error));
 
 
-// 读取 CSV 文件
+
 fetch('/data/star_all.csv')
 .then(response => response.text())
 .then(csvText => {
     var data = Papa.parse(csvText, { header: true }).data;
 
-    // 过滤掉空行
+
     data = data.filter(row => row['year_month'] && row['stars'] && row['community']);
 
 
-    // 按社区分组数据
     var communityGroups = {};
     data.forEach(row => {
         let community = row['community'];
@@ -297,15 +284,13 @@ fetch('/data/star_all.csv')
     });
 
 
-
-    // 自定义颜色列表（根据需要调整）
     var colors = [
         '#FF6347', '#4682B4', '#32CD32', '#FFD700', '#6A5ACD',
         '#FF4500', '#8A2BE2', '#00FA9A', '#FF1493', '#1E90FF',
         '#DA70D6', '#87CEEB', '#3CB371', '#B8860B', '#8B4513'
     ];
 
-    // 准备系列数据
+
     var seriesData = Object.keys(communityGroups).map((community, index) => ({
         name: community,
         type: 'line',
@@ -316,7 +301,6 @@ fetch('/data/star_all.csv')
     }));
 
 
-    // 配置 ECharts 散点图选项
     var option4 = {
         title: {
             text: 'Star by Community and Year-Month',
@@ -354,24 +338,24 @@ fetch('/data/star_all.csv')
         series: seriesData
     };
 
-    // 使用配置项和数据显示图表
+
     let smallChartContainer = document.getElementById('chart4');
     let smallChart = initChart(smallChartContainer.id, option4);
     addClickEvent(smallChart, bigChart, bigChartContainer, smallChartContainer);
 })
 .catch(error => console.error('Error reading CSV file:', error));
 
-// 读取 CSV 文件
+
 fetch('/data/fork_all.csv')
 .then(response => response.text())
 .then(csvText => {
     var data = Papa.parse(csvText, { header: true }).data;
 
-    // 过滤掉空行
+
     data = data.filter(row => row['year_month'] && row['forks'] && row['community']);
 
 
-    // 按社区分组数据
+
     var communityGroups = {};
     data.forEach(row => {
         let community = row['community'];
@@ -386,14 +370,14 @@ fetch('/data/fork_all.csv')
 
 
 
-    // 自定义颜色列表（根据需要调整）
+
     var colors = [
         '#FF6347', '#4682B4', '#32CD32', '#FFD700', '#6A5ACD',
         '#FF4500', '#8A2BE2', '#00FA9A', '#FF1493', '#1E90FF',
         '#DA70D6', '#87CEEB', '#3CB371', '#B8860B', '#8B4513'
     ];
 
-    // 准备系列数据
+
     var seriesData = Object.keys(communityGroups).map((community, index) => ({
         name: community,
         type: 'line',
@@ -404,7 +388,7 @@ fetch('/data/fork_all.csv')
     }));
 
 
-    // 配置 ECharts 散点图选项
+
     var option5 = {
         title: {
             text: 'Forks by Community and Year-Month',
@@ -442,7 +426,7 @@ fetch('/data/fork_all.csv')
         series: seriesData
     };
 
-    // 使用配置项和数据显示图表
+
     let smallChartContainer = document.getElementById('chart5');
     let smallChart = initChart(smallChartContainer.id, option5);
     addClickEvent(smallChart, bigChart, bigChartContainer, smallChartContainer);
@@ -454,11 +438,9 @@ fetch('/data/activity_all.csv')
     .then(csvText => {
         var data = Papa.parse(csvText, { header: true }).data;
 
-        // 过滤掉空行
         data = data.filter(row => row['year_month'] && row['actor_count'] && row['community']);
 
 
-        // 按社区分组数据
         var communityGroups = {};
         data.forEach(row => {
             let community = row['community'];
@@ -473,20 +455,19 @@ fetch('/data/activity_all.csv')
 
 
 
-        // 自定义颜色列表（根据需要调整）
         var colors = [
             '#FF6347', '#4682B4', '#32CD32', '#FFD700', '#6A5ACD',
             '#FF4500', '#8A2BE2', '#00FA9A', '#FF1493', '#1E90FF',
             '#DA70D6', '#87CEEB', '#3CB371', '#B8860B', '#8B4513'
         ];
 
-        // 准备系列数据
+
         var seriesData = Object.keys(communityGroups).map((community, index) => ({
             name: community,
             type: 'scatter',
             data: communityGroups[community],
             symbolSize: function (data) {
-                return Math.sqrt(data[1]); // 根据 record_num 动态调整大小
+                return Math.sqrt(data[1]); 
             },
             itemStyle: {
                 color: colors[index % colors.length]
@@ -494,7 +475,6 @@ fetch('/data/activity_all.csv')
         }));
 
 
-        // 配置 ECharts 散点图选项
         var option6 = {
             title: {
                 text: 'Actor Numbers by Community and Year-Month',
@@ -532,7 +512,7 @@ fetch('/data/activity_all.csv')
             series: seriesData
         };
 
-        // 使用配置项和数据显示图表
+
         let smallChartContainer = document.getElementById('chart6');
         let smallChart = initChart(smallChartContainer.id, option6);
         addClickEvent(smallChart, bigChart, bigChartContainer, smallChartContainer);
@@ -540,19 +520,14 @@ fetch('/data/activity_all.csv')
     .catch(error => console.error('Error reading CSV file:', error));
 
 
-    // scripts.js
-
-// 读取 CSV 文件
 fetch('/data/star_and_fork.csv')
 .then(response => response.text())
 .then(csvText => {
     var data = Papa.parse(csvText, { header: true }).data;
 
-    // 过滤掉空行
     data = data.filter(row => row['year'] && row['stars'] && row['forks'] && row['community']);
 
 
-    // 按社区和年份分组数据
     var communityYearGroups = {};
     data.forEach(row => {
         let community = row['community'];
@@ -571,11 +546,11 @@ fetch('/data/star_and_fork.csv')
     });
 
 
-    // 获取所有社区和年份
+
     var communities = Object.keys(communityYearGroups);
     var years = [...new Set(data.map(row => row['year']))];
 
-    // 准备系列数据
+
     var seriesData = years.map(year => ({
         name: year.toString(),
         type: 'bar',
@@ -583,8 +558,6 @@ fetch('/data/star_and_fork.csv')
     }));
 
 
-
-    // 配置 ECharts 柱状图选项
     var option7 = {
         title: {
             text: 'Stars and Forks by Community and Year',
@@ -620,8 +593,8 @@ fetch('/data/star_and_fork.csv')
             name: 'Community',
             data: communities,
             axisLabel: {
-                rotate: 45, // 旋转45度
-                fontSize: 12 // 调整字体大小
+                rotate: 45, 
+                fontSize: 12 
             }
         },
         yAxis: {
@@ -631,7 +604,6 @@ fetch('/data/star_and_fork.csv')
         series: seriesData
     };
 
-        // 初始化 ECharts 实例
         let smallChartContainer = document.getElementById('chart7');
         let smallChart = initChart(smallChartContainer.id, option7);
         addClickEvent(smallChart, bigChart, bigChartContainer, smallChartContainer);
