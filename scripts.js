@@ -1,4 +1,27 @@
-// scripts.js
+function initChart(id, option) {
+    let chart = echarts.init(document.getElementById(id));
+    chart.setOption(option);
+    return chart;
+}
+
+// 获取并交换图表配置的函数
+function swapCharts(bigChart, smallChart, bigChartContainer, smallChartContainer) {
+    let bigOption = bigChart.getOption();
+    let smallOption = smallChart.getOption();
+
+    bigChart.clear();
+    smallChart.clear();
+
+    bigChart.setOption(smallOption);
+    smallChart.setOption(bigOption);
+}
+
+// 为小图表添加点击事件的函数
+function addClickEvent(smallChart, bigChart, bigChartContainer, smallChartContainer) {
+    smallChart.getDom().onclick = function () {
+        swapCharts(bigChart, smallChart, bigChartContainer, smallChartContainer);
+    };
+}
 
 // 读取 CSV 文件
 fetch('/data/contributor_all.csv')
@@ -26,7 +49,7 @@ fetch('/data/contributor_all.csv')
         ];
 
         // 配置 ECharts 饼图选项
-        var option = {
+        var option1 = {
             title: {
                 text: 'Contributors by Community',
                 left: 'center'
@@ -35,8 +58,12 @@ fetch('/data/contributor_all.csv')
                 trigger: 'item'
             },
             legend: {
-                orient: 'vertical',
-                left: 'left'
+                top: 'bottom',
+                textStyle: {
+                    fontSize: 10,
+                },
+                itemWidth: 10,
+                itemHeight: 10 
             },
             color: colors,
             series: [{
@@ -58,10 +85,10 @@ fetch('/data/contributor_all.csv')
             }]
         };
         // 使用配置项和数据显示图表
-        let chart = echarts.init(document.getElementById(`chart1`));
-        chart.setOption(option);
-    })
-    .catch(error => console.error('Error reading CSV file:', error));
+        let bigChartContainer = document.getElementById('chart1');
+        let bigChart = initChart(bigChartContainer.id, option1);
+        //let chart = echarts.init(document.getElementById(`chart1`));
+
 
 
     // scripts.js
@@ -108,7 +135,7 @@ fetch('/data/log_all.csv')
 
 
     // 配置 ECharts 堆叠柱状图选项
-    var option = {
+    var option2 = {
         title: {
             text: 'Contributors by Community and Year',
             left: 'center'
@@ -119,11 +146,15 @@ fetch('/data/log_all.csv')
                 type: 'shadow'
             }
         },
-        /*legend: {
-            orient: 'vertical',
-            left: 'left',
+        legend: {
+            top: 'bottom',
+            textStyle: {
+                fontSize: 10,
+            },
+            itemWidth: 10,
+            itemHeight: 10,
             data: communities
-        },*/
+        },
         xAxis: {
             type: 'category',
             data: years,
@@ -137,8 +168,9 @@ fetch('/data/log_all.csv')
         series: seriesData
     };
 
-    let chart = echarts.init(document.getElementById(`chart2`));
-    chart.setOption(option);
+    let smallChartContainer = document.getElementById('chart2');
+    let smallChart = initChart(smallChartContainer.id, option2);
+    addClickEvent(smallChart, bigChart, bigChartContainer, smallChartContainer);
 })
 .catch(error => console.error('Error reading CSV file:', error));
 
@@ -191,7 +223,7 @@ fetch('/data/merge_all.csv')
 
 
         // 配置 ECharts 散点图选项
-        var option = {
+        var option3 = {
             title: {
                 text: 'Record Numbers by Community and Year-Month',
                 left: 'center'
@@ -204,11 +236,15 @@ fetch('/data/merge_all.csv')
                            'Records: ' + params.data[1];
                 }
             },
-            /*legend: {
-                orient: 'vertical',
-                left: 'left',
+            legend: {
+                top: 'bottom',
+                textStyle: {
+                    fontSize: 10,
+                },
+                itemWidth: 10,
+                itemHeight: 10,
                 data: Object.keys(communityGroups)
-            },*/
+            },
             xAxis: {
                 type: 'category',
                 name: 'Year-Month',
@@ -222,8 +258,9 @@ fetch('/data/merge_all.csv')
         };
 
         // 使用配置项和数据显示图表
-        let chart = echarts.init(document.getElementById(`chart3`));
-        chart.setOption(option);
+        let smallChartContainer = document.getElementById('chart3');
+        let smallChart = initChart(smallChartContainer.id, option3);
+        addClickEvent(smallChart, bigChart, bigChartContainer, smallChartContainer);
     })
     .catch(error => console.error('Error reading CSV file:', error));
 
@@ -272,7 +309,7 @@ fetch('/data/star_all.csv')
 
 
     // 配置 ECharts 散点图选项
-    var option = {
+    var option4 = {
         title: {
             text: 'Star by Community and Year-Month',
             left: 'center'
@@ -285,11 +322,15 @@ fetch('/data/star_all.csv')
                        'Stars: ' + params.data[1];
             }
         },
-        /*legend: {
-            orient: 'vertical',
-            left: 'left',
+        legend: {
+            top: 'bottom',
+            textStyle: {
+                fontSize: 10,
+            },
+            itemWidth: 10,
+            itemHeight: 10,
             data: Object.keys(communityGroups)
-        },*/
+        },
         xAxis: {
             type: 'category',
             name: 'Year-Month',
@@ -303,8 +344,9 @@ fetch('/data/star_all.csv')
     };
 
     // 使用配置项和数据显示图表
-    let chart = echarts.init(document.getElementById(`chart4`));
-    chart.setOption(option);
+    let smallChartContainer = document.getElementById('chart4');
+    let smallChart = initChart(smallChartContainer.id, option4);
+    addClickEvent(smallChart, bigChart, bigChartContainer, smallChartContainer);
 })
 .catch(error => console.error('Error reading CSV file:', error));
 
@@ -352,7 +394,7 @@ fetch('/data/fork_all.csv')
 
 
     // 配置 ECharts 散点图选项
-    var option = {
+    var option5 = {
         title: {
             text: 'Forks by Community and Year-Month',
             left: 'center'
@@ -365,11 +407,15 @@ fetch('/data/fork_all.csv')
                        'Forks: ' + params.data[1];
             }
         },
-        /*legend: {
-            orient: 'vertical',
-            left: 'left',
+        legend: {
+            top: 'bottom',
+            textStyle: {
+                fontSize: 10,
+            },
+            itemWidth: 10,
+            itemHeight: 10,
             data: Object.keys(communityGroups)
-        },*/
+        },
         xAxis: {
             type: 'category',
             name: 'Year-Month',
@@ -383,8 +429,9 @@ fetch('/data/fork_all.csv')
     };
 
     // 使用配置项和数据显示图表
-    let chart = echarts.init(document.getElementById(`chart5`));
-    chart.setOption(option);
+    let smallChartContainer = document.getElementById('chart5');
+    let smallChart = initChart(smallChartContainer.id, option5);
+    addClickEvent(smallChart, bigChart, bigChartContainer, smallChartContainer);
 })
 .catch(error => console.error('Error reading CSV file:', error));
 
@@ -434,7 +481,7 @@ fetch('/data/activity_all.csv')
 
 
         // 配置 ECharts 散点图选项
-        var option = {
+        var option6 = {
             title: {
                 text: 'Actor Numbers by Community and Year-Month',
                 left: 'center'
@@ -447,11 +494,15 @@ fetch('/data/activity_all.csv')
                            'Actors: ' + params.data[1];
                 }
             },
-            /*legend: {
-                orient: 'vertical',
-                left: 'left',
+            legend: {
+                top: 'bottom',
+                textStyle: {
+                    fontSize: 10,
+                },
+                itemWidth: 10,
+                itemHeight: 10,
                 data: Object.keys(communityGroups)
-            },*/
+            },
             xAxis: {
                 type: 'category',
                 name: 'Year-Month',
@@ -465,8 +516,9 @@ fetch('/data/activity_all.csv')
         };
 
         // 使用配置项和数据显示图表
-        let chart = echarts.init(document.getElementById(`chart6`));
-        chart.setOption(option);
+        let smallChartContainer = document.getElementById('chart6');
+        let smallChart = initChart(smallChartContainer.id, option6);
+        addClickEvent(smallChart, bigChart, bigChartContainer, smallChartContainer);
     })
     .catch(error => console.error('Error reading CSV file:', error));
 
@@ -516,7 +568,7 @@ fetch('/data/star_and_fork.csv')
 
 
     // 配置 ECharts 柱状图选项
-    var option = {
+    var option7 = {
         title: {
             text: 'Stars and Forks by Community and Year',
             left: 'center'
@@ -536,6 +588,11 @@ fetch('/data/star_and_fork.csv')
         },
         legend: {
             data: years.map(year => year.toString()),
+            textStyle: {
+                fontSize: 10,
+            },
+            itemWidth: 10,
+            itemHeight: 10,
             top: 'bottom'
         },
         xAxis: {
@@ -551,8 +608,11 @@ fetch('/data/star_and_fork.csv')
     };
 
         // 初始化 ECharts 实例
-    var chart = echarts.init(document.getElementById('chart7'));
-    // 使用配置项和数据显示图表
-    chart.setOption(option);
+        let smallChartContainer = document.getElementById('chart7');
+        let smallChart = initChart(smallChartContainer.id, option7);
+        addClickEvent(smallChart, bigChart, bigChartContainer, smallChartContainer);
+})
+.catch(error => console.error('Error reading CSV file:', error));
+
 })
 .catch(error => console.error('Error reading CSV file:', error));
