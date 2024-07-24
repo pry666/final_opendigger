@@ -4,7 +4,7 @@ function initChart(id, option) {
     return chart;
 }
 
-// 获取并交换图表配置的函数
+// 实现图表交换
 function swapCharts(bigChart, smallChart, bigChartContainer, smallChartContainer) {
     let bigOption = bigChart.getOption();
     let smallOption = smallChart.getOption();
@@ -16,7 +16,7 @@ function swapCharts(bigChart, smallChart, bigChartContainer, smallChartContainer
     smallChart.setOption(bigOption);
 }
 
-// 为小图表添加点击事件的函数
+// 为小图表添加点击事件
 function addClickEvent(smallChart, bigChart, bigChartContainer, smallChartContainer) {
     smallChart.getDom().onclick = function () {
         swapCharts(bigChart, smallChart, bigChartContainer, smallChartContainer);
@@ -29,7 +29,6 @@ fetch('/data/contributor_all.csv')
     .then(csvText => {
         var data = Papa.parse(csvText, { header: true }).data;
 
-        // 将数据转换为 ECharts 需要的格式
         var seriesData = data.map(row => ({
             name: row['community'],
             value: parseInt(row['contributor_count'])
@@ -52,7 +51,10 @@ fetch('/data/contributor_all.csv')
         var option1 = {
             title: {
                 text: 'Contributors by Community',
-                left: 'center'
+                left: 'center',
+                textStyle: {
+                    fontSize: 16,
+                }
             },
             tooltip: {
                 trigger: 'item'
@@ -138,7 +140,10 @@ fetch('/data/log_all.csv')
     var option2 = {
         title: {
             text: 'Contributors by Community and Year',
-            left: 'center'
+            left: 'center',
+            textStyle: {
+                fontSize: 16,
+            }
         },
         tooltip: {
             trigger: 'axis',
@@ -226,7 +231,10 @@ fetch('/data/merge_all.csv')
         var option3 = {
             title: {
                 text: 'Record Numbers by Community and Year-Month',
-                left: 'center'
+                left: 'center',
+                textStyle: {
+                    fontSize: 16,
+                }
             },
             tooltip: {
                 trigger: 'item',
@@ -312,7 +320,10 @@ fetch('/data/star_all.csv')
     var option4 = {
         title: {
             text: 'Star by Community and Year-Month',
-            left: 'center'
+            left: 'center',
+            textStyle: {
+                fontSize: 16,
+            }
         },
         tooltip: {
             trigger: 'item',
@@ -338,7 +349,7 @@ fetch('/data/star_all.csv')
         },
         yAxis: {
             type: 'value',
-            name: 'Record Numbers'
+            name: 'Stars'
         },
         series: seriesData
     };
@@ -397,7 +408,10 @@ fetch('/data/fork_all.csv')
     var option5 = {
         title: {
             text: 'Forks by Community and Year-Month',
-            left: 'center'
+            left: 'center',
+            textStyle: {
+                fontSize: 16,
+            }
         },
         tooltip: {
             trigger: 'item',
@@ -423,7 +437,7 @@ fetch('/data/fork_all.csv')
         },
         yAxis: {
             type: 'value',
-            name: 'Record Numbers'
+            name: 'Forks'
         },
         series: seriesData
     };
@@ -484,7 +498,10 @@ fetch('/data/activity_all.csv')
         var option6 = {
             title: {
                 text: 'Actor Numbers by Community and Year-Month',
-                left: 'center'
+                left: 'center',
+                textStyle: {
+                    fontSize: 16,
+                }
             },
             tooltip: {
                 trigger: 'item',
@@ -571,7 +588,10 @@ fetch('/data/star_and_fork.csv')
     var option7 = {
         title: {
             text: 'Stars and Forks by Community and Year',
-            left: 'center'
+            left: 'center',
+            textStyle: {
+                fontSize: 16,
+            }
         },
         tooltip: {
             trigger: 'axis',
@@ -598,7 +618,11 @@ fetch('/data/star_and_fork.csv')
         xAxis: {
             type: 'category',
             name: 'Community',
-            data: communities
+            data: communities,
+            axisLabel: {
+                rotate: 45, // 旋转45度
+                fontSize: 12 // 调整字体大小
+            }
         },
         yAxis: {
             type: 'value',

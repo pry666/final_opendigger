@@ -30,17 +30,18 @@ body {
     width: 90%;
     height: 80%;
     margin-top: 20px; 
+    gap: 30px;
 }
 
 .left-column, .right-column {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 30%;
+    width: 60%;
 }
 
 .center-column {
-    width: 70%;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
